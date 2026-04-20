@@ -41,7 +41,10 @@ export default function Auth() {
       return;
     }
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
     setIsLoading(false);
     if (error) toast.error(error.message);
     else navigate("/", { replace: true });

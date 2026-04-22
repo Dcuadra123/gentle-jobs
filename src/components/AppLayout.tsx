@@ -32,8 +32,11 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 {user.email}
               </div>
               {role && (
-                <Badge variant={role === "admin" ? "default" : "secondary"} className="capitalize">
-                  {role}
+                <Badge
+                  variant={role === "admin" ? "default" : role === "encargado" ? "outline" : "secondary"}
+                  className="capitalize"
+                >
+                  {role === "admin" ? "Administrador" : role === "encargado" ? "Encargado" : "Técnico"}
                 </Badge>
               )}
             </div>

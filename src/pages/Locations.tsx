@@ -23,7 +23,9 @@ interface Location {
 }
 
 export default function Locations() {
-  const { isAdmin } = useAuth();
+  const { permissions } = useAuth();
+  const canManage = permissions.canManageAssets;
+  const canDelete = permissions.canDeleteAssets;
   const [items, setItems] = useState<Location[]>([]);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [open, setOpen] = useState(false);
@@ -154,7 +156,7 @@ export default function Locations() {
                 <TableHead>Edificio</TableHead>
                 <TableHead>Planta</TableHead>
                 <TableHead>Descripción</TableHead>
-                {isAdmin && <TableHead className="w-24" />}
+                {(canManage || canDelete) && <TableHead className="w-24" />}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -164,14 +166,18 @@ export default function Locations() {
                   <TableCell className="text-muted-foreground">{l.buildings?.name}</TableCell>
                   <TableCell className="text-muted-foreground">{l.floor ?? "—"}</TableCell>
                   <TableCell className="max-w-xs truncate text-muted-foreground">{l.description ?? "—"}</TableCell>
-                  {isAdmin && (
+                  {(canManage || canDelete) && (
                     <TableCell className="text-right">
-                      <Button size="icon" variant="ghost" onClick={() => startEdit(l)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => remove(l.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canManage && (
+                        <Button size="icon" variant="ghost" onClick={() => startEdit(l)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {canDelete && (
+                        <Button size="icon" variant="ghost" onClick={() => remove(l.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   )}
                 </TableRow>

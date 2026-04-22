@@ -28,7 +28,9 @@ interface Location { id: string; name: string; buildings?: { name: string } | nu
 interface Profile { id: string; full_name: string | null; email: string | null }
 
 export default function Preventive() {
-  const { user, isAdmin } = useAuth();
+  const { user, permissions } = useAuth();
+  const canEditAny = permissions.canEditAnyWork;
+  const canDelete = permissions.canDeleteAssets;
   const [items, setItems] = useState<PT[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -200,7 +202,7 @@ export default function Preventive() {
         <div className="grid gap-3">
           {items.map((p) => {
             const overdue = p.next_due_date < today;
-            const canEdit = isAdmin || p.assigned_to === user?.id;
+            const canEdit = canEditAny || p.assigned_to === user?.id;
             return (
               <Card key={p.id} className="shadow-card">
                 <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -237,7 +239,7 @@ export default function Preventive() {
                         <Pencil className="h-4 w-4" />
                       </Button>
                     )}
-                    {isAdmin && (
+                    {canDelete && (
                       <Button size="icon" variant="ghost" onClick={() => remove(p.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>

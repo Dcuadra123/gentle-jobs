@@ -48,7 +48,9 @@ const priorityClass = (p: Priority) =>
   : "bg-muted text-muted-foreground border-border";
 
 export default function WorkOrders() {
-  const { user, isAdmin } = useAuth();
+  const { user, permissions } = useAuth();
+  const canEditAny = permissions.canEditAnyWork;
+  const canDelete = permissions.canDeleteAssets;
   const [items, setItems] = useState<WorkOrder[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -238,7 +240,7 @@ export default function WorkOrders() {
       ) : (
         <div className="grid gap-3">
           {visible.map((w) => {
-            const canEdit = isAdmin || w.assigned_to === user?.id;
+            const canEdit = canEditAny || w.assigned_to === user?.id;
             return (
               <Card key={w.id} className="shadow-card transition-shadow hover:shadow-elevated">
                 <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -263,7 +265,7 @@ export default function WorkOrders() {
                         <Pencil className="h-4 w-4" />
                       </Button>
                     )}
-                    {isAdmin && (
+                    {canDelete && (
                       <Button size="icon" variant="ghost" onClick={() => remove(w.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>

@@ -18,7 +18,9 @@ interface Building {
 }
 
 export default function Buildings() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, permissions } = useAuth();
+  const canManage = permissions.canManageAssets;
+  const canDelete = permissions.canDeleteAssets;
   const [items, setItems] = useState<Building[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Building | null>(null);
@@ -74,7 +76,7 @@ export default function Buildings() {
           <h1 className="text-3xl font-semibold">Edificios</h1>
           <p className="text-muted-foreground">Gestiona los inmuebles a mantener.</p>
         </div>
-        {isAdmin && (
+        {canManage && (
           <Dialog
             open={open}
             onOpenChange={(v) => {
@@ -128,21 +130,25 @@ export default function Buildings() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-base">
                   <span>{b.name}</span>
-                  {isAdmin && (
+                  {(canManage || canDelete) && (
                     <div className="flex gap-1">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                          setEditing(b);
-                          setOpen(true);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => remove(b.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canManage && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => {
+                            setEditing(b);
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {canDelete && (
+                        <Button size="icon" variant="ghost" onClick={() => remove(b.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   )}
                 </CardTitle>

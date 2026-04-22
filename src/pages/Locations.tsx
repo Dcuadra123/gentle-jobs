@@ -86,7 +86,7 @@ export default function Locations() {
           <h1 className="text-3xl font-semibold">Ubicaciones</h1>
           <p className="text-muted-foreground">Zonas, salas y áreas dentro de cada edificio.</p>
         </div>
-        {isAdmin && (
+        {canManage && (
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
             <DialogTrigger asChild>
               <Button onClick={startCreate} disabled={buildings.length === 0}>

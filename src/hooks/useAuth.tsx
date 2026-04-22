@@ -2,7 +2,17 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-type Role = "admin" | "tecnico";
+type Role = "admin" | "encargado" | "tecnico";
+
+interface Permissions {
+  canManageUsers: boolean;
+  canManageAssets: boolean;      // crear/editar edificios y ubicaciones
+  canDeleteAssets: boolean;      // eliminar edificios/ubicaciones/órdenes/preventivos
+  canCreateWork: boolean;        // crear órdenes y preventivos
+  canAssignWork: boolean;        // reasignar trabajo a otros
+  canEditAnyWork: boolean;       // editar cualquier orden/preventivo (no solo lo asignado)
+  canViewReports: boolean;
+}
 
 interface AuthContextValue {
   user: User | null;
@@ -10,8 +20,25 @@ interface AuthContextValue {
   role: Role | null;
   loading: boolean;
   isAdmin: boolean;
+  isEncargado: boolean;
+  isTecnico: boolean;
+  permissions: Permissions;
   signOut: () => Promise<void>;
 }
+
+const buildPermissions = (role: Role | null): Permissions => {
+  const admin = role === "admin";
+  const encargado = role === "encargado";
+  return {
+    canManageUsers: admin,
+    canManageAssets: admin || encargado,
+    canDeleteAssets: admin,
+    canCreateWork: admin || encargado,
+    canAssignWork: admin || encargado,
+    canEditAnyWork: admin || encargado,
+    canViewReports: true,
+  };
+};
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 

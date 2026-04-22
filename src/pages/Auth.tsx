@@ -120,74 +120,117 @@ export default function Auth() {
     toast.success("Cuenta creada. Ya puedes acceder.");
   };
 
+  const features = [
+    { icon: Building2, title: "Edificios y ubicaciones", desc: "Organiza tu inventario por edificios, plantas y salas." },
+    { icon: ClipboardList, title: "Órdenes de trabajo", desc: "Crea, asigna y haz seguimiento de incidencias en tiempo real." },
+    { icon: CalendarClock, title: "Mantenimiento preventivo", desc: "Planifica revisiones periódicas y evita averías." },
+    { icon: BarChart3, title: "Informes y KPIs", desc: "Visualiza el estado, prioridades y rendimiento de tu equipo." },
+    { icon: ShieldCheck, title: "Roles y seguridad", desc: "Control de acceso por administradores y técnicos." },
+    { icon: Zap, title: "Rápido y simple", desc: "Diseñado para usarse desde cualquier dispositivo." },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-subtle p-4">
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="mb-6 flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-elevated">
-            <Wrench className="h-6 w-6" />
+    <div className="min-h-screen bg-gradient-subtle">
+      <div className="mx-auto grid min-h-screen max-w-7xl grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-2 lg:gap-12 lg:py-16">
+        {/* Landing column */}
+        <div className="flex flex-col justify-center animate-fade-in">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-elevated">
+              <Wrench className="h-6 w-6" />
+            </div>
+            <span className="text-lg font-semibold">Gestor de Mantenimiento</span>
           </div>
-          <h1 className="text-2xl font-semibold">Gestor de Mantenimiento</h1>
-          <p className="text-sm text-muted-foreground">Edificios e instalaciones</p>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            Mantén tus instalaciones <span className="bg-gradient-primary bg-clip-text text-transparent">bajo control</span>
+          </h1>
+          <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+            Centraliza edificios, ubicaciones, órdenes de trabajo e inspecciones preventivas en una sola herramienta. Reduce tiempos de respuesta y evita averías inesperadas.
+          </p>
+
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {features.map((f) => (
+              <div key={f.title} className="flex gap-3 rounded-lg border bg-card/60 p-4 backdrop-blur-sm transition-shadow hover:shadow-elevated">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <f.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold">{f.title}</h3>
+                  <p className="text-xs text-muted-foreground">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Datos seguros</div>
+            <div className="flex items-center gap-2"><Zap className="h-4 w-4 text-primary" /> Acceso instantáneo</div>
+            <div className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" /> Informes en vivo</div>
+          </div>
         </div>
-        <Card className="shadow-elevated">
-          <CardHeader>
-            <CardTitle>Acceso</CardTitle>
-            <CardDescription>Inicia sesión o crea una cuenta nueva.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="signin">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Entrar</TabsTrigger>
-                <TabsTrigger value="signup">Crear cuenta</TabsTrigger>
-              </TabsList>
 
-              <TabsContent value="signin">
-                <form onSubmit={handleSignIn} className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="si-identifier">Usuario o email</Label>
-                    <Input id="si-identifier" name="identifier" autoComplete="username" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="si-password">Contraseña</Label>
-                    <Input id="si-password" name="password" type="password" autoComplete="current-password" required />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Entrando…" : "Entrar"}
-                  </Button>
-                </form>
-              </TabsContent>
+        {/* Auth column */}
+        <div className="flex items-center justify-center animate-fade-in">
+          <div className="w-full max-w-md">
+            <Card className="shadow-elevated">
+              <CardHeader>
+                <CardTitle>Acceso</CardTitle>
+                <CardDescription>Inicia sesión o crea una cuenta nueva.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="signin">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="signin">Entrar</TabsTrigger>
+                    <TabsTrigger value="signup">Crear cuenta</TabsTrigger>
+                  </TabsList>
 
-              <TabsContent value="signup">
-                <form onSubmit={handleSignUp} className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="su-username">Nombre de usuario *</Label>
-                    <Input id="su-username" name="username" autoComplete="username" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="su-name">Nombre completo *</Label>
-                    <Input id="su-name" name="fullName" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="su-email">Email <span className="text-muted-foreground">(opcional)</span></Label>
-                    <Input id="su-email" name="email" type="email" autoComplete="email" />
-                    <p className="text-xs text-muted-foreground">Puedes añadirlo más tarde desde tu perfil.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="su-password">Contraseña *</Label>
-                    <Input id="su-password" name="password" type="password" autoComplete="new-password" required />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Creando…" : "Crear cuenta"}
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    El primer usuario registrado obtiene rol de administrador.
-                  </p>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                  <TabsContent value="signin">
+                    <form onSubmit={handleSignIn} className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="si-identifier">Usuario o email</Label>
+                        <Input id="si-identifier" name="identifier" autoComplete="username" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="si-password">Contraseña</Label>
+                        <Input id="si-password" name="password" type="password" autoComplete="current-password" required />
+                      </div>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Entrando…" : "Entrar"}
+                      </Button>
+                    </form>
+                  </TabsContent>
+
+                  <TabsContent value="signup">
+                    <form onSubmit={handleSignUp} className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="su-username">Nombre de usuario *</Label>
+                        <Input id="su-username" name="username" autoComplete="username" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="su-name">Nombre completo *</Label>
+                        <Input id="su-name" name="fullName" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="su-email">Email <span className="text-muted-foreground">(opcional)</span></Label>
+                        <Input id="su-email" name="email" type="email" autoComplete="email" />
+                        <p className="text-xs text-muted-foreground">Puedes añadirlo más tarde desde tu perfil.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="su-password">Contraseña *</Label>
+                        <Input id="su-password" name="password" type="password" autoComplete="new-password" required />
+                      </div>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Creando…" : "Crear cuenta"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        El primer usuario registrado obtiene rol de administrador.
+                      </p>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

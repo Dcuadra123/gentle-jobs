@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Wrench } from "lucide-react";
+import { Wrench, Building2, ClipboardList, CalendarClock, BarChart3, ShieldCheck, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 const usernameRegex = /^[a-zA-Z0-9_.-]{3,30}$/;

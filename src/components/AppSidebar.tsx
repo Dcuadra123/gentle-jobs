@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, MapPin, ClipboardList, CalendarClock, BarChart3, Wrench } from "lucide-react";
+import { LayoutDashboard, Building2, MapPin, ClipboardList, CalendarClock, BarChart3, Wrench, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAuth";
 
 const items = [
   { title: "Panel", url: "/", icon: LayoutDashboard },
@@ -22,10 +23,15 @@ const items = [
   { title: "Informes", url: "/reports", icon: BarChart3 },
 ];
 
+const adminItems = [
+  { title: "Usuarios y roles", url: "/admin/users", icon: Users },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { pathname } = useLocation();
+  const { isAdmin } = useAuth();
 
   return (
     <Sidebar collapsible="icon">
@@ -63,6 +69,29 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administración</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminItems.map((item) => {
+                  const active = pathname.startsWith(item.url);
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={active}>
+                        <NavLink to={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );

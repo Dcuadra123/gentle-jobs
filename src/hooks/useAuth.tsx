@@ -85,9 +85,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
+  const permissions = buildPermissions(role);
+
   return (
     <AuthContext.Provider
-      value={{ user, session, role, loading, isAdmin: role === "admin", signOut }}
+      value={{
+        user,
+        session,
+        role,
+        loading,
+        isAdmin: role === "admin",
+        isEncargado: role === "encargado",
+        isTecnico: role === "tecnico",
+        permissions,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

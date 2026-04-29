@@ -43,9 +43,9 @@ const statusVariant = (s: Status) =>
 
 const priorityClass = (p: Priority) =>
   p === "urgente" ? "bg-destructive/15 text-destructive border-destructive/30"
-  : p === "alta" ? "bg-warning/15 text-warning border-warning/30"
-  : p === "media" ? "bg-primary/10 text-primary border-primary/20"
-  : "bg-muted text-muted-foreground border-border";
+    : p === "alta" ? "bg-warning/15 text-warning border-warning/30"
+      : p === "media" ? "bg-primary/10 text-primary border-primary/20"
+        : "bg-muted text-muted-foreground border-border";
 
 export default function WorkOrders() {
   const { user, permissions } = useAuth();
@@ -108,11 +108,27 @@ export default function WorkOrders() {
     };
     if (!editing) payload.created_by = user!.id;
 
-    const res = editing
-      ? await supabase.from("work_orders").update(payload).eq("id", editing.id)
-      : await supabase.from("work_orders").insert(payload);
-    if (res.error) toast.error(res.error.message);
-    else { toast.success(editing ? "Actualizada" : "Creada"); setOpen(false); load(); }
+    let res;
+    if (editing) {
+      res = await supabase.from("work_orders").update(payload).eq("id", editing.id);
+    } else {
+      res = await supabase.from("work_orders").insert(payload).select();
+    }
+
+    if (res.error) {
+      toast.error(res.error.message);
+    } else {
+      if (!editing && res.data && res.data[0]) {
+        fetch("https://require-press-anchovy.ngrok-free.dev/webhook-test/A", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(res.data[0]),
+        }).catch((err) => console.error("Error al enviar webhook:", err));
+      }
+      toast.success(editing ? "Actualizada" : "Creada");
+      setOpen(false);
+      load();
+    }
   };
 
   const remove = async (id: string) => {
@@ -162,7 +178,7 @@ export default function WorkOrders() {
                   <Select value={priority} onValueChange={(v) => setPriority(v as Priority)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {(["baja","media","alta","urgente"] as Priority[]).map((p) => (
+                      {(["baja", "media", "alta", "urgente"] as Priority[]).map((p) => (
                         <SelectItem key={p} value={p}>{priorityLabel[p]}</SelectItem>
                       ))}
                     </SelectContent>
@@ -173,7 +189,7 @@ export default function WorkOrders() {
                   <Select value={status} onValueChange={(v) => setStatus(v as Status)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {(["pendiente","en_curso","completada","cancelada"] as Status[]).map((s) => (
+                      {(["pendiente", "en_curso", "completada", "cancelada"] as Status[]).map((s) => (
                         <SelectItem key={s} value={s}>{statusLabel[s]}</SelectItem>
                       ))}
                     </SelectContent>
